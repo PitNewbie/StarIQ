@@ -8,7 +8,7 @@ const questions = [
         { question: "Berapakah hasil dari: 8 + 2 × 4 - 6 ÷ 2 ?", options: ["11", "13", "17", "37"], answer: 1 },
         { question: "Deret huruf: A, C, F, J, O, ... Huruf selanjutnya adalah?", options: ["S", "T", "U", "V"], answer: 2 },
         { question: "Semua mamalia bernapas dengan paru-paru. Paus adalah mamalia. Kesimpulannya?", options: ["Paus bernapas dengan insang", "Paus bernapas dengan paru-paru", "Paus bukan ikan", "Tidak dapat disimpulkan"], answer: 1 },
-        { question: "Keran A mengisi penuh bak dalam 2 jam. Keran B mengisi penuh bak dalam 3 jam. Jika dibuka bersamaan, berapa lama bak akan penuh?", options: ["1 jam 12 menit", "1 jam 30 menit", "2 jam 30 menit", "5 jam"], answer: 0 }
+        { question: "Keran A mengisi penuh bak dalam 2 jam. Keran B mengisi penuh bak dalam 3 jam. Jika dibuka bersamaan, berapa lama bak akan penuh?", options: ["1 jam 12 menit", "1 jam 30 menit", "2 jam 30 menit", "5 jam"], answer: 0 },
 
             // --- POLA DERET & ANGKA (25 Soal) ---
     { question: "Angka selanjutnya dari deret: 1, 4, 9, 16, 25, ...", options: ["30", "32", "36", "40"], answer: 2 },
