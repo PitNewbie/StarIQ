@@ -90,7 +90,8 @@ const questions = [
     { question: "Pisau : Memotong = Sapu : ?", options: ["Lantai", "Membersihkan", "Kotoran", "Debu"], answer: 1 },
     { question: "Utara : Selatan = Timur : ?", options: ["Tenggara", "Barat", "Timur Laut", "Utara"], answer: 1 },
     { question: "Es : Dingin = Api : ?", options: ["Asap", "Merah", "Panas", "Kayu"], answer: 2 },
-
+    { question: "beratan kapas 1kg atau besi 1kg?", options: ["kapas", "sama", "besi", "imbang"], answer: 2 },
+        
     // --- PENGETAHUAN UMUM & PENGENALAN (15 Soal) ---
     { question: "Mana yang TIDAK termasuk alat indra?", options: ["Mata", "Telinga", "Jantung", "Kulit"], answer: 2 },
     { question: "Mana yang berbeda dari kelompok ini?", options: ["Apel", "Jeruk", "Pisang", "Bayam"], answer: 3 },
