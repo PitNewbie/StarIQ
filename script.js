@@ -1,0 +1,275 @@
+    const categoryMap = {
+        pattern: [0, 7],      // Pola Deret
+        math: [1, 6, 9],      // Matematika
+        logic: [3, 4, 5, 8],  // Logika Penalaran
+        general: [2]          // Pengetahuan Umum
+    };
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let selectedOptionIndex = null;
+    let userAnswers = []; // Menyimpan jawaban user untuk statistik berdasarkan index asli
+    let questionOrder = []; // Menyimpan urutan acak soal
+
+    function startTest() {
+        currentQuestionIndex = 0;
+        score = 0;
+        userAnswers = [];
+
+        // Mengacak urutan soal (Fisher-Yates Shuffle)
+        questionOrder = Array.from({length: questions.length}, (_, i) => i);
+        for (let i = questionOrder.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [questionOrder[i], questionOrder[j]] = [questionOrder[j], questionOrder[i]];
+        }
+
+        document.getElementById('start-screen').classList.remove('active');
+        document.getElementById('result-screen').classList.remove('active');
+        document.getElementById('quiz-screen').classList.add('active');
+        loadQuestion();
+    }
+
+    function resetTest() {
+        startTest();
+    }
+
+    function loadQuestion() {
+        selectedOptionIndex = null;
+        document.getElementById('next-btn').disabled = true;
+        document.getElementById('next-btn').innerText = (currentQuestionIndex === questions.length - 1) ? "Selesai & Hitung IQ" : "Selanjutnya";
+
+        // Mengambil soal berdasarkan urutan yang sudah diacak
+        const originalIndex = questionOrder[currentQuestionIndex];
+        const q = questions[originalIndex];
+        
+        const progress = ((currentQuestionIndex) / questions.length) * 100;
+        document.getElementById('progress-bar').style.width = progress + '%';
+        document.getElementById('question-number').innerText = `Pertanyaan ${currentQuestionIndex + 1} dari ${questions.length}`;
+        document.getElementById('question-text').innerText = q.question;
+        
+        const optionsContainer = document.getElementById('options-container');
+        optionsContainer.innerHTML = '';
+        
+        q.options.forEach((opt, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = opt;
+            btn.onclick = () => selectOption(index, btn);
+            optionsContainer.appendChild(btn);
+        });
+    }
+
+    function selectOption(index, btn) {
+        selectedOptionIndex = index;
+        const buttons = document.querySelectorAll('.option-btn');
+        buttons.forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        document.getElementById('next-btn').disabled = false;
+    }
+
+    function nextQuestion() {
+        const originalIndex = questionOrder[currentQuestionIndex];
+        const isCorrect = (selectedOptionIndex === questions[originalIndex].answer);
+        
+        // Simpan jawaban (true jika benar) di index aslinya agar statistik tetap bekerja
+        userAnswers[originalIndex] = isCorrect;
+        
+        if (isCorrect) score++;
+
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questions.length) {
+            loadQuestion();
+        } else {
+            showResult();
+        }
+    }
+
+    function showResult(sharedData = null) {
+        document.getElementById('start-screen').classList.remove('active');
+        document.getElementById('quiz-screen').classList.remove('active');
+        document.getElementById('result-screen').classList.add('active');
+        
+        let calculatedIQ, category, desc, isShared = false;
+
+        if (sharedData) {
+            // Mode Melihat Link Orang Lain
+            calculatedIQ = sharedData.iq;
+            category = sharedData.cat;
+            desc = sharedData.desc;
+            isShared = true;
+
+            document.getElementById('result-title').innerText = "Hasil StarIQ Milik Seseorang";
+            document.getElementById('result-subtitle').innerText = "Berikut adalah skor IQ yang telah dibagikan kepada Anda:";
+            document.getElementById('btn-restart').innerText = "Ikuti Tes Ini Sendiri";
+            document.getElementById('btn-share').style.display = 'none';
+            document.getElementById('share-box').style.display = 'none';
+        } else {
+            // Mode Selesai Tes Sendiri
+            calculatedIQ = 75 + (score * 6);
+            
+            if (calculatedIQ >= 130) {
+                category = "Sangat Superior (Genius)";
+                desc = "Luar biasa! Analisis logika dan matematika Anda berada di tingkat sangat jenius.";
+            } else if (calculatedIQ >= 120) {
+                category = "Superior";
+                desc = "Hebat! Anda memiliki kecerdasan dan memecahkan masalah di atas rata-rata yang sangat baik.";
+            } else if (calculatedIQ >= 110) {
+                category = "Rata-rata Atas";
+                desc = "Bagus! Kemampuan kognitif dan logika Anda berada di atas kebanyakan orang.";
+            } else if (calculatedIQ >= 90) {
+                category = "Rata-rata";
+                desc = "Anda memiliki kemampuan kognitif dan logika yang normal/standar.";
+            } else {
+                category = "Rata-rata Bawah";
+                desc = "Pertanyaan ini mungkin cukup menantang. Terus latih kemampuan logika Anda!";
+            }
+
+            document.getElementById('result-title').innerText = "Hasil Tes IQ Anda";
+            document.getElementById('result-subtitle').innerText = "Berdasarkan perhitungan logika dan ketepatan jawaban Anda:";
+            document.getElementById('btn-restart').innerText = "Ulangi Tes";
+            document.getElementById('btn-share').style.display = 'inline-block';
+            document.getElementById('share-box').style.display = 'none';
+            
+            // SAVE TO HISTORY & STATS
+            saveToHistory(calculatedIQ, category, desc);
+        }
+
+        document.getElementById('iq-score').innerText = calculatedIQ;
+        document.getElementById('iq-category').innerText = category;
+        document.getElementById('iq-description').innerText = desc;
+    }
+
+    // --- SIDEBAR & PAGE LOGIC ---
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('show');
+    }
+
+    function switchPage(page) {
+        // Toggle Nav Classes
+        document.getElementById('nav-dashboard').classList.remove('active-menu');
+        document.getElementById('nav-history').classList.remove('active-menu');
+        document.getElementById('nav-' + page).classList.add('active-menu');
+
+        // Toggle Pages
+        document.getElementById('page-dashboard').classList.remove('active-page');
+        document.getElementById('page-history').classList.remove('active-page');
+        document.getElementById('page-' + page).classList.add('active-page');
+
+        // Close sidebar
+        toggleSidebar();
+
+        // If history, render it
+        if(page === 'history') {
+            renderHistory();
+        }
+    }
+
+    // --- HISTORY CALCULATION ---
+    function saveToHistory(iq, cat, desc) {
+        const stats = {
+            pattern: calcPercent(categoryMap.pattern),
+            math: calcPercent(categoryMap.math),
+            logic: calcPercent(categoryMap.logic)
+        };
+
+        const historyData = {
+            date: new Date().toLocaleDateString('id-ID', {day: 'numeric', month: 'long', year: 'numeric'}),
+            iq: iq,
+            category: cat,
+            desc: desc,
+            stats: stats
+        };
+
+        localStorage.setItem('stariq_history', JSON.stringify(historyData));
+    }
+
+    function calcPercent(indexes) {
+        let correctCount = 0;
+        indexes.forEach(idx => {
+            if (userAnswers[idx]) correctCount++;
+        });
+        return Math.round((correctCount / indexes.length) * 100);
+    }
+
+    function renderHistory() {
+        const historyContainer = document.getElementById('history-content');
+        const dataString = localStorage.getItem('stariq_history');
+
+        if (!dataString) {
+            historyContainer.innerHTML = '<div class="empty-history">Belum ada riwayat tes. Silakan selesaikan tes di Dashboard.</div>';
+            return;
+        }
+
+        const data = JSON.parse(dataString);
+
+        historyContainer.innerHTML = `
+            <div style="background: #eff6ff; border: 1px solid var(--primary-color); border-radius: 8px; padding: 20px; margin-bottom: 25px; text-align:center;">
+                <h3 style="margin-bottom: 5px;">Skor Terakhir (${data.date})</h3>
+                <div style="font-size: 40px; font-weight: 700; color: var(--primary-color);">${data.iq}</div>
+                <div style="font-weight: 600; color: var(--text-main);">${data.category}</div>
+            </div>
+
+            <h3 style="margin-bottom: 20px; font-size:18px;">Statistik Kemampuan</h3>
+            
+            <div class="stat-row">
+                <div class="stat-label"><span>Penalaran Logika</span> <span>${data.stats.logic}%</span></div>
+                <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: ${data.stats.logic}%; background: #3b82f6;"></div></div>
+            </div>
+
+            <div class="stat-row">
+                <div class="stat-label"><span>Analisis Matematika</span> <span>${data.stats.math}%</span></div>
+                <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: ${data.stats.math}%; background: #10b981;"></div></div>
+            </div>
+
+            <div class="stat-row">
+                <div class="stat-label"><span>Pengenalan Pola & Deret</span> <span>${data.stats.pattern}%</span></div>
+                <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: ${data.stats.pattern}%; background: #f59e0b;"></div></div>
+            </div>
+        `;
+    }
+
+    // --- SHARE LINK (BASE64) ---
+    function generateShareLink() {
+        const iq = document.getElementById('iq-score').innerText;
+        const cat = document.getElementById('iq-category').innerText;
+        const desc = document.getElementById('iq-description').innerText;
+
+        const payload = {
+            iq: parseInt(iq),
+            cat: cat,
+            desc: desc
+        };
+
+        const base64Str = btoa(encodeURIComponent(JSON.stringify(payload)));
+        
+        const baseUrl = window.location.origin + window.location.pathname;
+        const shareUrl = `${baseUrl}?result=${base64Str}`;
+
+        const shareBox = document.getElementById('share-box');
+        const shareInput = document.getElementById('share-link-input');
+        
+        shareBox.style.display = 'block';
+        shareInput.value = shareUrl;
+        shareInput.select();
+    }
+
+    // --- INIT APP ---
+    window.onload = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const resultParam = urlParams.get('result');
+
+        if (resultParam) {
+            try {
+                const decodedStr = decodeURIComponent(atob(resultParam));
+                const sharedData = JSON.parse(decodedStr);
+                showResult(sharedData);
+                window.history.replaceState({}, document.title, window.location.pathname);
+            } catch (e) {
+                console.error("Link tidak valid", e);
+            }
+        }
+    };
