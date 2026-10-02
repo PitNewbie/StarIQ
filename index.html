@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StarIQ - Tes IQ Profesional & Analisis Logika</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="brand">StarIQ</div>
+    <div class="hamburger" onclick="toggleSidebar()">☰</div>
+</nav>
+
+<!-- Sidebar -->
+<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+<aside class="sidebar" id="sidebar">
+    <span class="close-btn" onclick="toggleSidebar()">&times;</span>
+    <a class="menu-item active-menu" id="nav-dashboard" onclick="switchPage('dashboard')">Dashboard</a>
+    <a class="menu-item" id="nav-history" onclick="switchPage('history')">History & Statistik</a>
+</aside>
+
+<!-- PAGE 1: DASHBOARD (Ujian & Hasil) -->
+<div class="container active-page" id="page-dashboard">
+    <!-- Halaman Pembuka -->
+    <div id="start-screen" class="card active">
+        <h1>StarIQ - Tes IQ & Logika Kognitif</h1>
+        <p>Tes ini dirancang untuk mengukur kemampuan logika, analisis matematika, dan pengenalan pola Anda. Terdapat 10 pertanyaan yang harus dijawab. Usahakan untuk menjawab dengan teliti dan tanpa bantuan kalkulator untuk hasil yang paling akurat.</p>
+        <button class="btn" onclick="startTest()">Mulai Tes Sekarang</button>
+    </div>
+
+    <!-- Halaman Kuis -->
+    <div id="quiz-screen" class="card">
+        <div class="progress-container">
+            <div id="progress-bar" class="progress-bar"></div>
+        </div>
+        <span id="question-number" class="question-number">Pertanyaan 1 dari 10</span>
+        <div id="question-text" class="question-text">Teks Pertanyaan di sini</div>
+        <div id="options-container" class="options-grid">
+            <!-- Pilihan jawaban akan dirender di sini via JS -->
+        </div>
+        <div class="nav-buttons">
+            <button id="next-btn" class="btn" onclick="nextQuestion()" disabled>Selanjutnya</button>
+        </div>
+    </div>
+
+    <div id="result-screen" class="card">
+        <div class="result-box">
+            <h2 id="result-title">Hasil Tes IQ Anda</h2>
+            <p id="result-subtitle">Berdasarkan perhitungan logika dan ketepatan jawaban Anda:</p>
+            <div id="iq-score" class="iq-score">100</div>
+            <div id="iq-category" class="iq-category">Rata-rata</div>
+            <p id="iq-description">Anda memiliki kemampuan kognitif yang baik.</p>
+            
+            <button class="btn" id="btn-restart" onclick="resetTest()" style="margin-top: 20px;">Ulangi Tes</button>
+            <button class="btn btn-outline" id="btn-share" onclick="generateShareLink()">Bagikan Hasil (Link)</button>
+            
+            <div class="share-box" id="share-box">
+                <p style="margin-bottom:5px; font-size:14px; color:var(--text-main); font-weight:600;">Salin link di bawah untuk membagikan hasil Anda:</p>
+                <input type="text" id="share-link-input" class="share-input" readonly onclick="this.select()">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container" id="page-history">
+    <div class="card active">
+        <h1>Riwayat & Statistik Anda</h1>
+        <p>Analisis mendalam mengenai kemampuan kognitif Anda berdasarkan tes terakhir yang diselesaikan.</p>
+        
+        <div id="history-content">
+            <!-- Akan diisi oleh JavaScript -->
+            <div class="empty-history">Belum ada riwayat tes. Silakan selesaikan tes terlebih dahulu.</div>
+        </div>
+    </div>
+</div>
+
+    <script src="soal.js"></script>
+    <script src="script.js"></script>
+  
+</body>
+</html>
