@@ -24,13 +24,14 @@
         userAnswers = [];
 
         // Mengacak urutan soal (Fisher-Yates Shuffle)
-        questionOrder = Array.from({length: questions.length}, (_, i) => i);
-        for (let i = questionOrder.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [questionOrder[i], questionOrder[j]] = [questionOrder[j], questionOrder[i]];
-        }
-
-        questionOrder = questionOrder.slice(0, 10);
+    questionOrder = Array.from({length: questions.length}, (_, i) => i);
+      for (let i = questionOrder.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [questionOrder[i], questionOrder[j]] = [questionOrder[j], questionOrder[i]];
+}
+// Tambahkan 1 baris ini agar aplikasi hanya mengambil 10 soal saja dari 100 yang tersedia
+questionOrder = questionOrder.slice(0, 10);
+       
         
         document.getElementById('start-screen').classList.remove('active');
         document.getElementById('result-screen').classList.remove('active');
