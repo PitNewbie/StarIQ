@@ -44,18 +44,20 @@
         startTest();
     }
 
-    function loadQuestion() {
+        function loadQuestion() {
         selectedOptionIndex = null;
         document.getElementById('next-btn').disabled = true;
-        document.getElementById('next-btn').innerText = (currentQuestionIndex === questions.length - 1) ? "Selesai & Hitung IQ" : "Selanjutnya";
+        
+        // PERBAIKAN: questions.length diganti jadi questionOrder.length
+        document.getElementById('next-btn').innerText = (currentQuestionIndex === questionOrder.length - 1) ? "Selesai & Hitung IQ" : "Selanjutnya";
 
-        // Mengambil soal berdasarkan urutan yang sudah diacak
         const originalIndex = questionOrder[currentQuestionIndex];
         const q = questions[originalIndex];
         
-        const progress = ((currentQuestionIndex) / questions.length) * 100;
+        // PERBAIKAN: questions.length diganti jadi questionOrder.length
+        const progress = (currentQuestionIndex / questionOrder.length) * 100;
         document.getElementById('progress-bar').style.width = progress + '%';
-        document.getElementById('question-number').innerText = `Pertanyaan ${currentQuestionIndex + 1} dari ${questions.length}`;
+        document.getElementById('question-number').innerText = `Pertanyaan ${currentQuestionIndex + 1} dari ${questionOrder.length}`;
         document.getElementById('question-text').innerText = q.question;
         
         const optionsContainer = document.getElementById('options-container');
@@ -68,7 +70,8 @@
             btn.onclick = () => selectOption(index, btn);
             optionsContainer.appendChild(btn);
         });
-    }
+        }
+
 
     function selectOption(index, btn) {
         selectedOptionIndex = index;
@@ -82,19 +85,20 @@
         const originalIndex = questionOrder[currentQuestionIndex];
         const isCorrect = (selectedOptionIndex === questions[originalIndex].answer);
         
-        // Simpan jawaban (true jika benar) di index aslinya agar statistik tetap bekerja
         userAnswers[originalIndex] = isCorrect;
         
         if (isCorrect) score++;
 
         currentQuestionIndex++;
 
-        if (currentQuestionIndex < questions.length) {
+        // PERBAIKAN: questions.length diganti jadi questionOrder.length
+        if (currentQuestionIndex < questionOrder.length) {
             loadQuestion();
         } else {
             showResult();
         }
-    }
+      }
+
 
     function showResult(sharedData = null) {
         document.getElementById('start-screen').classList.remove('active');
@@ -200,11 +204,19 @@
 
     function calcPercent(indexes) {
         let correctCount = 0;
+        let testedCount = 0; // Tambahan variabel untuk menghitung soal yang benar-benar keluar
+        
         indexes.forEach(idx => {
-            if (userAnswers[idx]) correctCount++;
+            if (userAnswers[idx] !== undefined) {
+                testedCount++;
+                if (userAnswers[idx]) correctCount++;
+            }
         });
-        return Math.round((correctCount / indexes.length) * 100);
+        
+        if (testedCount === 0) return 0; // Mencegah error jika tipe soal ini tidak keluar sama sekali
+        return Math.round((correctCount / testedCount) * 100);
     }
+
 
     function renderHistory() {
         const historyContainer = document.getElementById('history-content');
