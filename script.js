@@ -1,9 +1,16 @@
-    const categoryMap = {
-        pattern: [0, 7],      // Pola Deret
-        math: [1, 6, 9],      // Matematika
-        logic: [3, 4, 5, 8],  // Logika Penalaran
-        general: [2]          // Pengetahuan Umum
-    };
+   const categoryMap = {
+    // Pola Deret: Index 0, 7, dan 10 s.d 34
+    pattern: [0, 7, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34],
+    
+    // Matematika: Index 1, 6, 9, dan 35 s.d 59
+    math: [1, 6, 9, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59],
+    
+    // Logika Penalaran: Index 3, 4, 5, 8, dan 60 s.d 84
+    logic: [3, 4, 5, 8, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84],
+    
+    // Pengetahuan Umum: Index 2, dan 85 s.d 99
+    general: [2, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99]
+};
 
     let currentQuestionIndex = 0;
     let score = 0;
@@ -23,6 +30,8 @@
             [questionOrder[i], questionOrder[j]] = [questionOrder[j], questionOrder[i]];
         }
 
+        questionOrder = questionOrder.slice(0, 10);
+        
         document.getElementById('start-screen').classList.remove('active');
         document.getElementById('result-screen').classList.remove('active');
         document.getElementById('quiz-screen').classList.add('active');
